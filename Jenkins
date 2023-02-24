@@ -1,0 +1,76 @@
+pipeline {
+    agent any
+    environment{
+        
+             myname = "sachin"
+    }
+    parameters{
+        
+         string(name :'pleaseenteryouname', defaultValue :'sachin shewale' , description: 'Who should I say hello to?')
+         booleanParam (name: "myname ", defaultValue: true , description: 'Toggle this value') 
+         choice(name:"city", choices:[ "pune" , "nashik" , "mumbai"] , description : "my city")
+    }
+    stages{
+        stage("multiple cmd is excute in seprate script"){
+            steps{
+                echo "this is script 1st"
+                sh 'ls'
+                
+            }
+        }
+        stage("multiple cmd in one line"){
+            steps{
+            sh '''
+            ls
+            date
+            pwd 
+        
+            '''
+            }
+        }
+        stage("Enviorment variable "){
+           steps{
+             echo "this is in build variable ${BUILD_ID}"
+       
+            }
+        }
+        stage("global varibale or only scop variable"){
+            environment{
+             myname1 = "vinod"
+    }
+            steps{
+                echo "this is global varibale  ${myname}"
+                echo "this is only relataed to that stage varibale  ${myname1}"
+            }
+        }
+        stage("parameters"){
+            steps{
+            
+            echo "hello ${params.pleaseenteryouname1}"
+            echo "hello ${params.myname1 }"
+            echo "hello ${params.city1 }"
+            
+            }
+        }
+        stage("deploy on prod"){
+            input {
+                 message "can we do this"
+                 ok "please process "
+            }
+            steps{
+              echo  "deploy on producation using manuval approval and continous delivary" 
+            }
+        }
+    }
+     post { 
+        always { 
+            echo 'I will always say Hello again!'
+        }
+        failure{
+            echo"fail"
+        }
+        success{
+            echo "success"
+        }
+    }
+}
